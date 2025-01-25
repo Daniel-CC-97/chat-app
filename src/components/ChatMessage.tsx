@@ -9,6 +9,9 @@ interface ChatMessageProps {
 const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
   const isSystemMessage = sender === "System";
 
+  console.log("sender: ", sender);
+  console.log("isSystemMessage: ", isSystemMessage);
+
   return (
     <div
       className={`flex mb-3 ${

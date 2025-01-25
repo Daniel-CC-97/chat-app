@@ -14,11 +14,13 @@ export default function Home() {
 
   useEffect(() => {
     socket.on("message", (data) => {
+      console.log("socket on message");
       setMessages((prev) => [...prev, data]);
     });
 
-    socket.on("user-joined", (data) => {
-      setMessages((prev) => [...prev, { sender: "system", message: data }]);
+    socket.on("user_joined", (message) => {
+      console.log("socket on join room");
+      setMessages((prev) => [...prev, { sender: "System", message }]);
     });
 
     return () => {
@@ -34,6 +36,8 @@ export default function Home() {
   };
 
   const handleJoinRoom = () => {
+    console.log("joined room");
+
     if (room && userName) {
       socket.emit("join-room", { room, username: userName });
       setJoined(true);
