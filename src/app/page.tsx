@@ -41,9 +41,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex justify-center w-full mt-24">
+    <div className="flex justify-center items-center h-screen p-4">
       {!joined ? (
-        <div className="flex w-full max-w-3xl mx-auto flex-col items-center ">
+        <div className="flex h-full w-full max-w-3xl mx-auto flex-col items-center justify-center ">
           <h1 className="mb-4 text-2xl font-bold">Join a Room</h1>
           <input
             type="text"
@@ -67,9 +67,11 @@ export default function Home() {
           </button>
         </div>
       ) : (
-        <div className="w-full max-w-3xl mx-auto">
+        // How can i make this div below take up the whole screen?
+        <div className="flex flex-col h-screen w-full max-w-3xl mx-auto py-4">
           <h1 className="mb-4 font-bold text-2xl">Room: {room}</h1>
-          <div className=" h-[500px] overflow-y-auto p-4 mb-4 border-2 rounded-lg">
+          {/* This div will dynamically take up available space */}
+          <div className="flex-grow overflow-y-auto p-4 border-2 rounded-lg">
             {messages?.map((msg, index) => (
               <ChatMessage
                 key={index}
@@ -79,6 +81,7 @@ export default function Home() {
               ></ChatMessage>
             ))}
           </div>
+          {/* ChatForm will stay at the bottom */}
           <ChatForm onSendMessage={handleSendMessage}></ChatForm>
         </div>
       )}
