@@ -27,8 +27,8 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
           isSystemMessage
             ? "bg-messageBackground"
             : isOwnMessage
-            ? "bg-receiverMessageBackground border"
-            : "border bg-inputBackground"
+            ? "bg-receiverMessageBackground border ml-6"
+            : "border bg-inputBackground mr-6"
         }`}
       >
         {!isSystemMessage && <p className="text-sm font-bold">{sender}</p>}
