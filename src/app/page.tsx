@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatForm from "@/components/ChatForm";
 import ChatMessage from "@/components/ChatMessage";
+import { socket } from "@/lib/socketClient";
 
 export default function Home() {
   const [messages, setMessages] = useState<
@@ -11,12 +12,32 @@ export default function Home() {
   const [joined, setJoined] = useState(false);
   const [userName, setUserName] = useState("");
 
+  useEffect(() => {
+    socket.on("message", (data) => {
+      setMessages((prev) => [...prev, data]);
+    });
+
+    socket.on("user-joined", (data) => {
+      setMessages((prev) => [...prev, { sender: "system", message: data }]);
+    });
+
+    return () => {
+      socket.off("user_joined");
+      socket.off("message");
+    };
+  }, []);
+
   const handleSendMessage = (message: string) => {
-    console.log("Message: ", message);
+    const data = { room, message, sender: userName };
+    setMessages((prev) => [...prev, { sender: userName, message }]);
+    socket.emit("message", data);
   };
 
   const handleJoinRoom = () => {
-    setJoined(true);
+    if (room && userName) {
+      socket.emit("join-room", { room, username: userName });
+      setJoined(true);
+    }
   };
 
   return (
@@ -29,14 +50,14 @@ export default function Home() {
             placeholder="Enter your username"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            className="w-64 px-4 py-2 mb-4 border-2 rounded-lg"
+            className="w-64 px-4 py-2 mb-4 border-2 rounded-lg bg-inputBackground border-inputBorder text-inputText focus:outline-none"
           ></input>
           <input
             type="text"
             placeholder="Enter room name"
             value={room}
             onChange={(e) => setRoom(e.target.value)}
-            className="w-64 px-4 py-2 mb-4 border-2 rounded-lg"
+            className="w-64 px-4 py-2 mb-4 border-2 rounded-lg bg-inputBackground border-inputBorder text-inputText focus:outline-none"
           ></input>
           <button
             onClick={handleJoinRoom}
@@ -47,9 +68,8 @@ export default function Home() {
         </div>
       ) : (
         <div className="w-full max-w-3xl mx-auto">
-          <h1 className="mb-4 font-bold text-2xl">Room: 1</h1>
-          <div className="bg-white h-[500px] overflow-y-auto p-4 mb-4 border-2 rounded-lg">
-            {/* TODO: add chat rooms */}
+          <h1 className="mb-4 font-bold text-2xl">Room: {room}</h1>
+          <div className=" h-[500px] overflow-y-auto p-4 mb-4 border-2 rounded-lg">
             {messages?.map((msg, index) => (
               <ChatMessage
                 key={index}
